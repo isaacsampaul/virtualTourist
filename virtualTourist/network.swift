@@ -8,9 +8,13 @@
 
 import Foundation
 import UIKit
+import CoreData
 
 class network
 {
+    let moc = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    var fr: NSFetchRequest<Photo> = Photo.fetchRequest()
+    
     func getPhotos(completionHandlerForPhotos: @escaping(_ sucess: Bool, _ error: String) -> Void)
     {
         let parameters = ["method" : "flickr.photos.search", "api_key" : "1084fa06094e329ec25f7df4421c8ecb","bbox" : bboxString() , "safe_search" : "1", "extras" : "url_m", "format" : "json", "nojsoncallback" : "1"]
@@ -141,29 +145,51 @@ class network
              return
              }
              let imageURL = URL(string: imageURLString)!
-             let imageData: Data!
-             do
-             {
-             imageData = try Data(contentsOf: imageURL)
-             }
-             catch
-             {
-             print("unable to get contents of URL")
-             return
-             }
-             let image = UIImage(data: imageData)
-             constants.imagesToDisplay.append(imageData)
-             count = count + 1
+            if let imageData = NSData(contentsOf: imageURL)
+            {
+                let image = UIImage(data: imageData as Data)
+                let entityDescription = NSEntityDescription.entity(forEntityName: "Photo", in: self.moc)
+                let photo = Photo(entity: entityDescription!, insertInto: self.moc)
+                photo.photo = imageData
+                do{
+                    try self.moc.save()
+                }
+                catch{
+                    
+                    print("unable to save data")
+                    return
+                }
+                
+                }
+                count = count + 1
              print("for loop executed\(count)")
-             //constants.imagesToDisplay.append(UIImage(data: imageData as! Data)!)
              }
              
              }
-             print("we have totally \(constants.imagesToDisplay.count) photos")
-             print(constants.imagesToDisplay)
+            self.fetchStoredData()
             completionHandlerForPhotoswithpage(true, "")
         }
         task.resume()
 
+    }
+    
+    func fetchStoredData()
+    {
+        
+        let data:[Photo]!
+        do{
+            data = try self.moc.fetch(self.fr)
+        }
+        catch{
+            
+            print("unable to retrieve data")
+            return
+        }
+        if data != nil
+        {
+        constants.imagesToDisplay = data
+        print("we have totally \(constants.imagesToDisplay.count) photos")
+        }
+        
     }
 }

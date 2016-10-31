@@ -15,5 +15,5 @@ struct constants
     static var coordinate: CLLocationCoordinate2D!
     static let SearchLatRange = (-90.0, 90.0)
     static let SearchLonRange = (-180.0, 180.0)
-    static var imagesToDisplay: [Data] = []
+    static var imagesToDisplay: [Photo] = []
 }

@@ -52,11 +52,12 @@
                     </view>
                     <navigationItem key="navigationItem" id="ZR6-0q-iWQ"/>
                     <connections>
+                        <outlet property="longPress" destination="WqV-SO-x9s" id="qkW-d9-SYe"/>
                         <outlet property="map" destination="CWI-Ws-j5n" id="Yq9-96-cMr"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="WqV-SO-x9s">
+                <pongPressGestureRecognizer allowableMovement="0.0" minimumPressDuration="0.5" id="WqV-SO-x9s">
                     <connections>
                         <action selector="dropPin:" destination="BYZ-38-t0r" id="PWG-cI-RCI"/>
                     </connections>
@@ -84,7 +85,8 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="eR0-uz-lLt">
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="eR0-uz-lLt">
+                                <frame key="frameInset" width="1000" height="1000"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="200" id="2Fq-NR-HI5"/>
                                 </constraints>
@@ -92,7 +94,8 @@
                                     <outlet property="delegate" destination="45l-yV-voF" id="sWw-Db-fQl"/>
                                 </connections>
                             </mapView>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="72R-hF-S0O">
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="72R-hF-S0O">
+                                <frame key="frameInset" width="1000" height="1000"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="nOP-Mz-AYZ">
                                     <size key="itemSize" width="50" height="50"/>

@@ -12,6 +12,7 @@ import CoreData
 
 class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsControllerDelegate {
     @IBOutlet weak var map: MKMapView!
+    @IBOutlet var longPress: UILongPressGestureRecognizer!
     var anotations: [MKPointAnnotation] = []
     var latitude: Double!
     var longitude: Double!
@@ -43,7 +44,6 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
     }
     
     @IBAction func dropPin(_ sender: AnyObject) {
-        
         let touchPoint = sender.location(in: map)
         let coordinates = map.convert(touchPoint, toCoordinateFrom: map)
         let anotation = MKPointAnnotation()
@@ -62,11 +62,15 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
         netCode.getPhotos { (sucess, error) in
             if sucess == true
             {
-                let entityDescription = NSEntityDescription.entity(forEntityName: "Pin", in: self.moc)
-                let pin = Pin(entity: entityDescription!, insertInto: self.moc)
                 if pin.photo?.count == 0
                 {
-                    pin.photo = NSSet(array: constants.imagesToDisplay)
+                   guard let set = NSSet(array: constants.imagesToDisplay) as? NSSet else
+                   {
+                    print("unable to convert to set")
+                    return
+                    }
+                    pin.photo = set
+                    
                 }
                 
             }
