@@ -179,6 +179,7 @@ class network
         let data:[Photo]!
         do{
             data = try self.moc.fetch(self.fr)
+
         }
         catch{
             
@@ -187,9 +188,15 @@ class network
         }
         if data != nil
         {
-        constants.imagesToDisplay = data
+            let limit = data.count - 50
+            print(data.index(after: limit))
+            let range = Range(uncheckedBounds: (lower: limit, upper: data.count))
+            print(range)
+        constants.imagesToDisplay = Array(data[range])
         print("we have totally \(constants.imagesToDisplay.count) photos")
         }
         
     }
+    
+   
 }

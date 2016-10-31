@@ -110,8 +110,8 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
         {
             let lat = items.latitude
             let long = items.longitude
-            let data = items.photo
-            print("latitude: \(lat) longitude: \(long)")
+            let data = items.photo?.count
+            print("latitude: \(lat) longitude: \(long) has totally \(data) photos")
         }
         
     }
