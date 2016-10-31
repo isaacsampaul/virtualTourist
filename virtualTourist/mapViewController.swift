@@ -13,6 +13,8 @@ import CoreData
 class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsControllerDelegate {
     @IBOutlet weak var map: MKMapView!
     @IBOutlet var longPress: UILongPressGestureRecognizer!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var label: UILabel!
     var anotations: [MKPointAnnotation] = []
     var latitude: Double!
     var longitude: Double!
@@ -20,6 +22,7 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
     var fr: NSFetchRequest<Pin> = Pin.fetchRequest()
     
     override func viewDidLoad() {
+        UIEnabler(Status: true)
         let data:[Pin]!
         do{
             data = try self.moc.fetch(self.fr)
@@ -57,9 +60,10 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
         pin.latitude = coordinates.latitude
         pin.longitude = coordinates.longitude
         let netCode = network()
-        
+        UIEnabler(Status: false)
         // get images and store them
         netCode.getPhotos { (sucess, error) in
+            self.UIEnabler(Status: true)
             if sucess == true
             {
                 if pin.photo?.count == 0
@@ -94,7 +98,7 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
         }
     }
     
-    func fetchStoredData()
+    func fetchStoredData() -> [Pin]
     {
 
         let data:[Pin]!
@@ -104,7 +108,7 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
         catch{
             
             print("unable to retrieve data")
-            return
+            return []
         }
         for items in data
         {
@@ -114,43 +118,43 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
             print("latitude: \(lat) longitude: \(long) has totally \(data) photos")
         }
         
+        return data
+        
     }
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         constants.latitude = view.annotation?.coordinate.latitude
         constants.longitude = view.annotation?.coordinate.longitude
         constants.coordinate = view.annotation?.coordinate
-        print("latitude: \(constants.latitude!) longitude: \(constants.longitude!)")
-        let controller = self.storyboard?.instantiateViewController(withIdentifier: "collectionViewController") as! collectionViewController
-        let netCode = network()
-        netCode.getPhotos { (sucess, error) in
-            if sucess == true
+        let data = fetchStoredData()
+        for items in data
+        {
+            if items.latitude == constants.latitude && items.longitude == constants.longitude
             {
-                let entityDescription = NSEntityDescription.entity(forEntityName: "Pin", in: self.moc)
-                let pin = Pin(entity: entityDescription!, insertInto: self.moc)
-                if pin.photo?.count == 0
-                {
-                pin.photo = NSSet(array: constants.imagesToDisplay)
-                }
-                do{
-                    try self.moc.save()
-                }
-                catch{
-                    
-                    print("unable to save data")
-                    return
-                }
-                self.fetchStoredData()
-            }
-            else
-            {
-                print(error)
+                constants.indexOfData = data.index(of: items)
             }
         }
+        let data1 = data[constants.indexOfData]
+        print("latitude chosen is \(constants.latitude), longitude chosen is \(constants.longitude)")
+        print("latitdue obtained is \(data1.latitude), longitude obtained is \(data1.longitude)")
+        let controller = self.storyboard?.instantiateViewController(withIdentifier: "collectionViewController") as! collectionViewController
         present(controller, animated: true, completion: nil)
     }
     
-    
+    func UIEnabler(Status: Bool)
+    {
+        activityIndicator.isHidden = Status
+        if Status == true
+        {
+            map.isHidden = false
+        }
+        else
+        {
+            map.isHidden = true
+        }
+        label.isHidden = Status
+        
+    }
 
 }
 

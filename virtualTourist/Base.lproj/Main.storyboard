@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -34,6 +35,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="6DL-3O-Osf"/>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CWI-Ws-j5n">
                                 <gestureRecognizers/>
                                 <connections>
@@ -41,17 +43,37 @@
                                     <outletCollection property="gestureRecognizers" destination="WqV-SO-x9s" appends="YES" id="Uh2-5M-0ES"/>
                                 </connections>
                             </mapView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="yrU-FV-Evw">
+                                <color key="color" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </activityIndicatorView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Please Wait While Downloading Images" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2mL-Db-0QO">
+                                <frame key="frameInset" minX="55" minY="297" width="266" height="42"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                <color key="textColor" red="0.60853161379961784" green="0.78063634563700757" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="CWI-Ws-j5n" secondAttribute="trailing" id="EAb-St-w7m"/>
-                            <constraint firstItem="CWI-Ws-j5n" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Moq-MH-KgY"/>
-                            <constraint firstItem="CWI-Ws-j5n" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="VH1-nC-gUm"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="CWI-Ws-j5n" secondAttribute="bottom" id="mNn-jk-G8s"/>
+                            <constraint firstItem="6DL-3O-Osf" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="K0G-eA-g9k"/>
+                            <constraint firstItem="2mL-Db-0QO" firstAttribute="centerX" secondItem="yrU-FV-Evw" secondAttribute="centerX" id="MnV-rT-gDv"/>
+                            <constraint firstItem="6DL-3O-Osf" firstAttribute="top" secondItem="CWI-Ws-j5n" secondAttribute="top" id="S2J-EC-AAg"/>
+                            <constraint firstItem="yrU-FV-Evw" firstAttribute="top" secondItem="2mL-Db-0QO" secondAttribute="bottom" constant="8" symbolic="YES" id="Yfb-gB-W0B"/>
+                            <constraint firstAttribute="trailing" secondItem="CWI-Ws-j5n" secondAttribute="trailing" id="Yj0-3U-sDG"/>
+                            <constraint firstItem="yrU-FV-Evw" firstAttribute="centerX" secondItem="CWI-Ws-j5n" secondAttribute="centerX" id="amA-Pe-Pox"/>
+                            <constraint firstItem="CWI-Ws-j5n" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="g2e-8N-O0C"/>
+                            <constraint firstItem="2mL-Db-0QO" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="39" id="gJT-Bf-mdN"/>
+                            <constraint firstItem="CWI-Ws-j5n" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="ik3-on-A0Z"/>
+                            <constraint firstItem="6DL-3O-Osf" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="kj3-Pj-K8o"/>
+                            <constraint firstItem="6DL-3O-Osf" firstAttribute="trailing" secondItem="CWI-Ws-j5n" secondAttribute="trailing" id="uC3-xb-JP1"/>
+                            <constraint firstItem="CWI-Ws-j5n" firstAttribute="leading" secondItem="6DL-3O-Osf" secondAttribute="leading" id="vLA-2q-r1r"/>
+                            <constraint firstItem="yrU-FV-Evw" firstAttribute="centerY" secondItem="6DL-3O-Osf" secondAttribute="centerY" id="wPu-4u-d1C"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="ZR6-0q-iWQ"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="yrU-FV-Evw" id="MZI-8x-fsM"/>
+                        <outlet property="label" destination="2mL-Db-0QO" id="28Z-Vh-T8E"/>
                         <outlet property="longPress" destination="WqV-SO-x9s" id="qkW-d9-SYe"/>
                         <outlet property="map" destination="CWI-Ws-j5n" id="Yq9-96-cMr"/>
                     </connections>
