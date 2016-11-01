@@ -15,6 +15,7 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
     @IBOutlet var longPress: UILongPressGestureRecognizer!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var label: UILabel!
+    var isExecuting = false
     var anotations: [MKPointAnnotation] = []
     var latitude: Double!
     var longitude: Double!
@@ -47,6 +48,9 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
     }
     
     @IBAction func dropPin(_ sender: AnyObject) {
+      if longPress.state == .began
+      {
+        print("executed once")
         let touchPoint = sender.location(in: map)
         let coordinates = map.convert(touchPoint, toCoordinateFrom: map)
         let anotation = MKPointAnnotation()
@@ -92,9 +96,11 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
             print("unable to save data")
             return
         }
+            self.longPress.isEnabled = true
+            self.UIEnabler(Status: true)
         // fetch the data
         self.fetchStoredData()
-            
+            }
         }
     }
     
@@ -138,6 +144,7 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
         print("latitude chosen is \(constants.latitude), longitude chosen is \(constants.longitude)")
         print("latitdue obtained is \(data1.latitude), longitude obtained is \(data1.longitude)")
         let controller = self.storyboard?.instantiateViewController(withIdentifier: "collectionViewController") as! collectionViewController
+        controller.data = data1
         present(controller, animated: true, completion: nil)
     }
     
