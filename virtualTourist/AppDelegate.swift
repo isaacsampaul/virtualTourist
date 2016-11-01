@@ -83,6 +83,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
             }
         }
+        else
+        {
+            print("no change is present")
+        }
     }
 
 }

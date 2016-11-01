@@ -41,6 +41,7 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     }
     @IBAction func refresh(_ sender: AnyObject) {
         self.fetchPhoto()
+        self.reloadImages()
     }
     
     func makeAnnotation()
@@ -66,6 +67,16 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         imageData.remove(at: indexPath.row)
         collectionView.deleteItems(at: [indexPath])
         moc.delete(ObjectToDelete(indexPath: indexPath))
+        do{
+            print("savinData")
+            try self.moc.save()
+            
+        }
+        catch{
+            
+            print("unable to save data")
+            return
+        }
     }
     
     func fetchPhoto()
@@ -110,5 +121,83 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         return data[1290129102]
     
     }
+    
+    func reloadImages()
+    {
+        self.Done.isEnabled = false
+        self.reload.isEnabled = false
+        let netCode = network()
+        netCode.getPhotos { (sucess, error) in
+            if sucess == true
+            {
+                self.Done.isEnabled = true
+                self.reload.isEnabled = true
+                let data = self.fetchStoredData()
+                for items in data
+                {
+                    if items.latitude == constants.latitude && items.longitude == constants.longitude
+                    {
+                        items.photo = NSSet(array: constants.imagesToDisplay) as? NSSet
+                        do{
+                            print("savinData")
+                            try self.moc.save()
 
+                        }
+                        catch{
+                            
+                            print("unable to save data")
+                            return
+                        }
+                    }
+                    
+                    let data = self.fetchStoredData()
+                    for items in data
+                    {
+                        if items.latitude == constants.latitude && items.longitude == constants.longitude
+                        {
+                            constants.indexOfData = data.index(of: items)
+                        }
+                    }
+                    self.data = data[constants.indexOfData]
+                    
+                }
+            }
+            else
+            {
+                self.Done.isEnabled = true
+                self.reload.isEnabled = true
+               self.displayAlert(title: "Please check your Internet Connection", message: "Unable to Reload Images")
+            }
+        }
+        
+    }
+
+    func displayAlert(title: String, message: String)
+    {
+        let alert = UIAlertController()
+        alert.title = title
+        alert.message = message
+        let continueAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default){
+            
+            action in alert.dismiss(animated: true, completion: nil)
+            
+        }
+        alert.addAction(continueAction)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func fetchStoredData() -> [Pin]
+    {
+        
+        let data:[Pin]!
+        do{
+            data = try self.moc.fetch(self.fr)
+        }
+        catch{
+            
+            print("unable to retrieve data")
+            return []
+        }
+        return data
+    }
 }
