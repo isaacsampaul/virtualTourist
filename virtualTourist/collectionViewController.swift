@@ -19,6 +19,7 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     @IBOutlet weak var map: MKMapView!
     var data: Pin!
     var imageData: [NSData] = []
+    var removedData: NSData!
     
     let moc = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var fr1: NSFetchRequest<Photo> = Photo.fetchRequest()
@@ -50,7 +51,7 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return (self.data.photo?.count)!
+        return self.imageData.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -58,6 +59,13 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         let data = self.imageData[indexPath.row]
         cell.image.image = UIImage(data: data as Data)
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        self.removedData = imageData[indexPath.row]
+        imageData.remove(at: indexPath.row)
+        collectionView.deleteItems(at: [indexPath])
+        moc.delete(ObjectToDelete(indexPath: indexPath))
     }
     
     func fetchPhoto()
@@ -82,6 +90,25 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
             }
         }
             print("total image retrieved is \(self.imageData.count)")
+    }
+    
+    func ObjectToDelete(indexPath: IndexPath) -> NSManagedObject
+    {
+        let data:[Photo]!
+        data = try! self.moc.fetch(self.fr1)
+        for items in data
+        {
+            if items.photo == self.removedData
+            {
+                print("found the item to be deleted")
+                return data[data.index(of: items)!]
+                
+            }
+            
+        }
+        
+        return data[1290129102]
+    
     }
 
 }
