@@ -16,7 +16,6 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var label: UILabel!
     var isExecuting = false
-    var anotations: [MKPointAnnotation] = []
     var latitude: Double!
     var longitude: Double!
     let moc = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -57,19 +56,24 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
         anotation.coordinate = coordinates
         constants.latitude = coordinates.latitude
         constants.longitude = coordinates.longitude
-        self.anotations.append(anotation)
-        map.addAnnotation(anotation)
+        /*map.addAnnotation(anotation)
         let entityDescription = NSEntityDescription.entity(forEntityName: "Pin", in: self.moc)
         let pin = Pin(entity: entityDescription!, insertInto: self.moc)
         pin.latitude = coordinates.latitude
-        pin.longitude = coordinates.longitude
+        pin.longitude = coordinates.longitude */
         let netCode = network()
         UIEnabler(Status: false)
         // get images and store them
         netCode.getPhotos { (sucess, error) in
-            self.UIEnabler(Status: true)
             if sucess == true
             {
+                self.UIEnabler(Status: true)
+                print("executed adding annotation")
+                self.map.addAnnotation(anotation)
+                let entityDescription = NSEntityDescription.entity(forEntityName: "Pin", in: self.moc)
+                let pin = Pin(entity: entityDescription!, insertInto: self.moc)
+                pin.latitude = coordinates.latitude
+                pin.longitude = coordinates.longitude
                 if pin.photo?.count == 0
                 {
                    guard let set = NSSet(array: constants.imagesToDisplay) as? NSSet else
@@ -84,6 +88,8 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
             }
             else
             {
+                self.UIEnabler(Status: true)
+                self.displayAlert(title: "Please check your Internet Connection", message: "Unable to add Annotation to Map")
                 print(error)
             }
         
@@ -161,6 +167,21 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
         }
         label.isHidden = Status
         
+    }
+    
+    func displayAlert(title: String, message: String)
+    {
+        self.UIEnabler(Status: true)
+        let alert = UIAlertController()
+        alert.title = title
+        alert.message = message
+        let continueAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default){
+            
+            action in alert.dismiss(animated: true, completion: nil)
+            
+        }
+        alert.addAction(continueAction)
+        self.present(alert, animated: true, completion: nil)
     }
 
 }

@@ -161,6 +161,12 @@ class network
                 }
                 
                 }
+                else
+            {
+                print("unable to get data")
+                completionHandlerForPhotoswithpage(false, "unable to get data")
+                return
+                }
                 count = count + 1
              print("for loop executed\(count)")
              }
