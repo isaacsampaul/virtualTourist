@@ -23,6 +23,11 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
     
     override func viewDidLoad() {
         UIEnabler(Status: true)
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+
         let data:[Pin]!
         do{
             data = try self.moc.fetch(self.fr)
@@ -34,22 +39,23 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
         }
         if data.count > 0
         {
-        for items in data
-        {
-            let lat = items.latitude
-            let long = items.longitude
-            let coordinates = CLLocationCoordinate2D(latitude: lat, longitude: long)
-            let annotation = MKPointAnnotation()
-            annotation.coordinate = coordinates
-            map.addAnnotation(annotation)
-        }
+            for items in data
+            {
+                let lat = items.latitude
+                let long = items.longitude
+                let coordinates = CLLocationCoordinate2D(latitude: lat, longitude: long)
+                let annotation = MKPointAnnotation()
+                annotation.coordinate = coordinates
+                map.removeAnnotation(annotation)
+                map.addAnnotation(annotation)
+            }
         }
     }
     
     @IBAction func dropPin(_ sender: AnyObject) {
       if longPress.state == .began
       {
-        print("executed once")
+    
         let touchPoint = sender.location(in: map)
         let coordinates = map.convert(touchPoint, toCoordinateFrom: map)
         let anotation = MKPointAnnotation()
@@ -68,7 +74,6 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
             if sucess == true
             {
                 self.UIEnabler(Status: true)
-                print("executed adding annotation")
                 self.map.addAnnotation(anotation)
                 let entityDescription = NSEntityDescription.entity(forEntityName: "Pin", in: self.moc)
                 let pin = Pin(entity: entityDescription!, insertInto: self.moc)
@@ -76,13 +81,7 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
                 pin.longitude = coordinates.longitude
                 if pin.photo?.count == 0
                 {
-                   guard let set = NSSet(array: constants.imagesToDisplay) as? NSSet else
-                   {
-                    print("unable to convert to set")
-                    return
-                    }
-                    pin.photo = set
-                    
+                    pin.photo = NSSet(array: constants.imagesToDisplay) as NSSet
                 }
                 
             }

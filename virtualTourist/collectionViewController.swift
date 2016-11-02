@@ -13,6 +13,8 @@ import CoreData
 
 class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionViewDelegate,UICollectionViewDataSource,NSFetchedResultsControllerDelegate
 {
+    // var and outlet declaration
+    
     @IBOutlet weak var reload: UIBarButtonItem!
     @IBOutlet weak var Done: UIBarButtonItem!
     @IBOutlet weak var collectionView: UICollectionView!
@@ -20,6 +22,9 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     var data: Pin!
     var imageData: [NSData] = []
     var removedData: NSData!
+    var application = (UIApplication.shared.delegate as! AppDelegate)
+    
+    // creating managed object context and fetch request for both pin and photo objects
     
     let moc = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var fr1: NSFetchRequest<Photo> = Photo.fetchRequest()
@@ -36,14 +41,26 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     override func viewDidLoad() {
         collectionView.reloadData()
     }
+    
+    //dismiss present view controller when done button is pressed
     @IBAction func cancel(_ sender: AnyObject) {
         self.dismiss(animated: true, completion: nil)
     }
-    @IBAction func refresh(_ sender: AnyObject) {
-        self.fetchPhoto()
-        self.reloadImages()
-    }
     
+    //reload collectionView with new set of images
+    @IBAction func refresh(_ sender: AnyObject)
+    {
+        deleteExistingPhotos()
+        reloadImages { (sucess, error) in
+            if sucess == true
+            {
+                self.fetchPhoto()
+            }
+        }
+        
+        }
+    
+    //create annotation when displaying the view
     func makeAnnotation()
     {
         let annotation = MKPointAnnotation()
@@ -51,10 +68,14 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         map.addAnnotation(annotation)
     }
     
+    // Tells collection view the number of items to be displayed
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        fetchUsing()
+        print("The total fetched object is \(self.fetchResultsController().fetchedObjects?.count)")
         return self.imageData.count
     }
     
+    // Displays all the items for the selected pin
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! collectionViewCell
         let data = self.imageData[indexPath.row]
@@ -62,23 +83,16 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         return cell
     }
     
+    // Delete the selected item from the collectionView and the coreData
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         self.removedData = imageData[indexPath.row]
         imageData.remove(at: indexPath.row)
         collectionView.deleteItems(at: [indexPath])
         moc.delete(ObjectToDelete(indexPath: indexPath))
-        do{
-            print("savinData")
-            try self.moc.save()
-            
-        }
-        catch{
-            
-            print("unable to save data")
-            return
-        }
+        application.saveContext()
     }
     
+    // Fetch the photo objects for the particular pin
     func fetchPhoto()
     {
         self.imageData = []
@@ -97,12 +111,15 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         {
             if items.pin == self.data
             {
+                
                 self.imageData.append(items.photo!)
             }
         }
+        
             print("total image retrieved is \(self.imageData.count)")
     }
     
+    // Returns an object that has to be deleted from CoreData
     func ObjectToDelete(indexPath: IndexPath) -> NSManagedObject
     {
         let data:[Photo]!
@@ -111,7 +128,7 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         {
             if items.photo == self.removedData
             {
-                print("found the item to be deleted")
+                
                 return data[data.index(of: items)!]
                 
             }
@@ -119,59 +136,54 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         }
         
         return data[1290129102]
-    
     }
     
-    func reloadImages()
+    // Gets a new list of images and updates the CoreData
+    func reloadImages(completionHandlerForReloadingImages: @escaping(_ sucess: Bool, _ error: String) -> Void)
     {
         self.Done.isEnabled = false
         self.reload.isEnabled = false
+        self.collectionView.isScrollEnabled = false
         let netCode = network()
         netCode.getPhotos { (sucess, error) in
             if sucess == true
             {
                 self.Done.isEnabled = true
                 self.reload.isEnabled = true
-                let data = self.fetchStoredData()
+                self.collectionView.isScrollEnabled = true
+                let data = self.fetchStoredPins()
                 for items in data
                 {
+                    // find the selected pin object and delete it. Then add the same pin object with different photoObject set
                     if items.latitude == constants.latitude && items.longitude == constants.longitude
                     {
-                        items.photo = NSSet(array: constants.imagesToDisplay) as? NSSet
-                        do{
-                            print("savinData")
-                            try self.moc.save()
-
-                        }
-                        catch{
-                            
-                            print("unable to save data")
-                            return
-                        }
+                        self.moc.delete(data[data.index(of: items)!])
+                        let entityDescription = NSEntityDescription.entity(forEntityName: "Pin", in: self.moc)
+                        let pin = Pin(entity: entityDescription!, insertInto: self.moc)
+                        pin.latitude = constants.latitude
+                        pin.longitude = constants.longitude
+                        pin.photo = NSSet(array: constants.imagesToDisplay) as NSSet
+                        self.application.saveContext()
+                        
                     }
-                    
-                    let data = self.fetchStoredData()
-                    for items in data
-                    {
-                        if items.latitude == constants.latitude && items.longitude == constants.longitude
-                        {
-                            constants.indexOfData = data.index(of: items)
-                        }
-                    }
-                    self.data = data[constants.indexOfData]
-                    
                 }
+                
+                return completionHandlerForReloadingImages(true, "")
+                
             }
             else
             {
                 self.Done.isEnabled = true
                 self.reload.isEnabled = true
+                self.collectionView.isScrollEnabled = true
                self.displayAlert(title: "Please check your Internet Connection", message: "Unable to Reload Images")
+                return completionHandlerForReloadingImages(false,"unable to reload images")
             }
         }
         
     }
 
+    // displays an alert using the given title and messagae
     func displayAlert(title: String, message: String)
     {
         let alert = UIAlertController()
@@ -186,7 +198,8 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         self.present(alert, animated: true, completion: nil)
     }
     
-    func fetchStoredData() -> [Pin]
+    // returns a array of pinObjects
+    func fetchStoredPins() -> [Pin]
     {
         
         let data:[Pin]!
@@ -199,5 +212,73 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
             return []
         }
         return data
+    }
+    
+    // loads the data into the data variabe in collectionView
+    func loadDataIntoCollectionView()
+    {
+        let data = self.fetchStoredPins()
+        for items in data{
+            if items.latitude == constants.latitude && items.longitude == constants.longitude
+            {
+                self.data = data[data.index(of: items)!]
+                print("found the Items to reload")
+                
+            }
+            
+        }
+        performUIUpdatesOnMain {
+            print("executed the reloading process")
+        self.collectionView.reloadData()
+            
+        }
+    }
+    
+    func deleteExistingPhotos()
+    {
+        print("deleting photos")
+        let data:[Photo]!
+        do{
+            data = try self.moc.fetch(self.fr1)
+            
+        }
+        catch{
+            
+            print("unable to retrieve data")
+            return
+        }
+        
+        for items in data
+        {
+            if items.pin == self.data
+            {
+                self.moc.delete(data[data.index(of: items)!])
+                self.application.saveContext()
+                print("executed")
+                
+            }
+            
+        }
+    }
+    
+    // fetching the objects
+    func fetchResultsController() -> NSFetchedResultsController<Photo>
+    {
+        self.fr1.predicate = NSPredicate(format: "pin == %@", self.data)
+        self.fr1.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
+        let frc = NSFetchedResultsController(fetchRequest: self.fr1, managedObjectContext: self.moc, sectionNameKeyPath: nil, cacheName: nil)
+        return frc
+    }
+    func fetchUsing()
+    {
+        do
+    {
+         try self.fetchResultsController().performFetch()
+        print("fetched objects using frc is \(fetchResultsController().fetchedObjects?.count)")
+    }
+    catch
+    {
+        return
+        }
     }
 }

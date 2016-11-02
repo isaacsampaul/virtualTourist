@@ -49,13 +49,14 @@ class network
                 return
             }
             
-            guard let totalPages = photos["page"] as? Int else {
+            guard let totalPages = photos["pages"] as? Int else {
                print("cant get total pages")
                 return
             }
-            
+
             // pick a random page!
             let pageLimit = min(totalPages, 40)
+            print("total pages is \(totalPages)")
             let randomPage = Int(arc4random_uniform(UInt32(pageLimit))) + 1
             self.getPhotosWithRandomPage(parameters: parameters, pageNumber: randomPage, completionHandlerForPhotoswithpage: { (sucess, error) in
                 completionHandlerForPhotos(sucess, error)
@@ -135,6 +136,7 @@ class network
              }
              print("photo count is \(photoDictionary.count)")
              var count = 0
+            print(photoDictionary)
              for images in photoDictionary
              {
              if count < 50
@@ -144,13 +146,19 @@ class network
              print("unable to get image url")
              return
              }
+            guard let photoID = images["id"] as? String else
+            {
+                print("unable to get photo id")
+                return completionHandlerForPhotoswithpage(false, "unable to get photo ID")
+            }
              let imageURL = URL(string: imageURLString)!
             if let imageData = NSData(contentsOf: imageURL)
             {
-                let image = UIImage(data: imageData as Data)
+                
                 let entityDescription = NSEntityDescription.entity(forEntityName: "Photo", in: self.moc)
                 let photo = Photo(entity: entityDescription!, insertInto: self.moc)
                 photo.photo = imageData
+                photo.photoID = photoID
                 do{
                     try self.moc.save()
                 }
@@ -199,7 +207,6 @@ class network
             let range = Range(uncheckedBounds: (lower: limit, upper: data.count))
             print(range)
         constants.imagesToDisplay = Array(data[range])
-        print("we have totally \(constants.imagesToDisplay.count) photos")
         }
         
     }

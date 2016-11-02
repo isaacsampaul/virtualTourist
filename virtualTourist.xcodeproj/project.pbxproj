@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F40C00D31DC86B37002B7E1D /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F40C00D21DC86B37002B7E1D /* CollectionViewCell.swift */; };
+		F40F35A11DC9D94D0020DB50 /* GCDBlackBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = F40F35A01DC9D94D0020DB50 /* GCDBlackBox.swift */; };
 		F41B34BF1DC461B800AB57F2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41B34BE1DC461B800AB57F2 /* AppDelegate.swift */; };
 		F41B34C11DC461B800AB57F2 /* mapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41B34C01DC461B800AB57F2 /* mapViewController.swift */; };
 		F41B34C41DC461B800AB57F2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F41B34C21DC461B800AB57F2 /* Main.storyboard */; };
@@ -44,6 +45,7 @@
 
 /* Begin PBXFileReference section */
 		F40C00D21DC86B37002B7E1D /* CollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
+		F40F35A01DC9D94D0020DB50 /* GCDBlackBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GCDBlackBox.swift; sourceTree = "<group>"; };
 		F41B34BB1DC461B800AB57F2 /* virtualTourist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = virtualTourist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F41B34BE1DC461B800AB57F2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F41B34C01DC461B800AB57F2 /* mapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mapViewController.swift; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				F41B34EC1DC47CE500AB57F2 /* Constants.swift */,
+				F40F35A01DC9D94D0020DB50 /* GCDBlackBox.swift */,
 				F41B34F01DC48A6F00AB57F2 /* network.swift */,
 				F4C6458A1DC5D4FE00C49B33 /* Model.xcdatamodeld */,
 			);
@@ -330,6 +333,7 @@
 				F4C645921DC5DEF700C49B33 /* Pin+CoreDataProperties.swift in Sources */,
 				F41B34C11DC461B800AB57F2 /* mapViewController.swift in Sources */,
 				F4C645911DC5DEF700C49B33 /* Pin+CoreDataClass.swift in Sources */,
+				F40F35A11DC9D94D0020DB50 /* GCDBlackBox.swift in Sources */,
 				F41B34F11DC48A6F00AB57F2 /* network.swift in Sources */,
 				F41B34BF1DC461B800AB57F2 /* AppDelegate.swift in Sources */,
 				F4C645931DC5DEF700C49B33 /* Photo+CoreDataClass.swift in Sources */,

@@ -2,7 +2,7 @@
 //  Photo+CoreDataProperties.swift
 //  virtualTourist
 //
-//  Created by Isaac sam paul on 10/30/16.
+//  Created by Isaac sam paul on 11/2/16.
 //  Copyright © 2016 Isaac sam paul. All rights reserved.
 //
 
@@ -17,6 +17,7 @@ extension Photo {
     }
 
     @NSManaged public var photo: NSData?
+    @NSManaged public var photoID: String?
     @NSManaged public var pin: Pin?
 
 }
