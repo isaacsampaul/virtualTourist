@@ -265,7 +265,7 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     func fetchResultsController() -> NSFetchedResultsController<Photo>
     {
         self.fr1.predicate = NSPredicate(format: "pin == %@", self.data)
-        self.fr1.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
+        self.fr1.sortDescriptors = [NSSortDescriptor(key: "photoID", ascending: true)]
         let frc = NSFetchedResultsController(fetchRequest: self.fr1, managedObjectContext: self.moc, sectionNameKeyPath: nil, cacheName: nil)
         return frc
     }
