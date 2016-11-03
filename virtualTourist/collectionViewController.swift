@@ -23,6 +23,7 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     var imageData: [NSData] = []
     var removedData: NSData!
     var application = (UIApplication.shared.delegate as! AppDelegate)
+    var frc: NSFetchedResultsController<Photo>!
     
     // creating managed object context and fetch request for both pin and photo objects
     
@@ -34,6 +35,8 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         let coordinate = constants.coordinate!
         let region = MKCoordinateRegionMake(coordinate, MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
         map.setRegion(region, animated: true)
+        frc = self.fetchResultsController()
+        self.fetchUsing()
         self.fetchPhoto()
         makeAnnotation()
     }
@@ -70,8 +73,7 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     
     // Tells collection view the number of items to be displayed
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        fetchUsing()
-        print("The total fetched object is \(self.fetchResultsController().fetchedObjects?.count)")
+        print("The total fetched object is \(self.frc.fetchedObjects?.count)")
         return self.imageData.count
     }
     
@@ -96,24 +98,18 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     func fetchPhoto()
     {
         self.imageData = []
-        let data:[Photo]!
-        do{
-            data = try self.moc.fetch(self.fr1)
-            
-        }
-        catch{
-            
-            print("unable to retrieve data")
+        
+        guard let data = frc.fetchedObjects else
+        {
+            print("unable to move objects to data")
             return
         }
         
         for items in data
         {
-            if items.pin == self.data
-            {
-                
-                self.imageData.append(items.photo!)
-            }
+            
+            self.imageData.append(items.photo!)
+        
         }
         
             print("total image retrieved is \(self.imageData.count)")
@@ -264,20 +260,21 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     // fetching the objects
     func fetchResultsController() -> NSFetchedResultsController<Photo>
     {
-        self.fr1.predicate = NSPredicate(format: "pin == %@", self.data)
+        //self.fr1.predicate = NSPredicate(format: "pin == %@", self.data)
         self.fr1.sortDescriptors = [NSSortDescriptor(key: "photoID", ascending: true)]
         let frc = NSFetchedResultsController(fetchRequest: self.fr1, managedObjectContext: self.moc, sectionNameKeyPath: nil, cacheName: nil)
+        frc.delegate = self
         return frc
     }
     func fetchUsing()
     {
         do
     {
-         try self.fetchResultsController().performFetch()
-        print("fetched objects using frc is \(fetchResultsController().fetchedObjects?.count)")
+         try self.frc.performFetch()
     }
     catch
     {
+        print("unable to fetch the objects using frc")
         return
         }
     }
