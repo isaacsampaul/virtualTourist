@@ -17,4 +17,5 @@ struct constants
     static let SearchLonRange = (-180.0, 180.0)
     static var imagesToDisplay: [Photo] = []
     static var indexOfData: Int!
+    static var finishedLoading = false
 }

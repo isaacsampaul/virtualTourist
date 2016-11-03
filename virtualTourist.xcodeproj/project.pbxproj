@@ -19,6 +19,7 @@
 		F41B34ED1DC47CE500AB57F2 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41B34EC1DC47CE500AB57F2 /* Constants.swift */; };
 		F41B34EF1DC482F000AB57F2 /* collectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41B34EE1DC482F000AB57F2 /* collectionViewController.swift */; };
 		F41B34F11DC48A6F00AB57F2 /* network.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41B34F01DC48A6F00AB57F2 /* network.swift */; };
+		F48BA0B21DCB4DA500D47BF7 /* loadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48BA0B11DCB4DA400D47BF7 /* loadingViewController.swift */; };
 		F4C6458C1DC5D4FE00C49B33 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F4C6458A1DC5D4FE00C49B33 /* Model.xcdatamodeld */; };
 		F4C645911DC5DEF700C49B33 /* Pin+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C6458D1DC5DEF700C49B33 /* Pin+CoreDataClass.swift */; };
 		F4C645921DC5DEF700C49B33 /* Pin+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C6458E1DC5DEF700C49B33 /* Pin+CoreDataProperties.swift */; };
@@ -62,6 +63,7 @@
 		F41B34EC1DC47CE500AB57F2 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		F41B34EE1DC482F000AB57F2 /* collectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = collectionViewController.swift; sourceTree = "<group>"; };
 		F41B34F01DC48A6F00AB57F2 /* network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = network.swift; sourceTree = "<group>"; };
+		F48BA0B11DCB4DA400D47BF7 /* loadingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = loadingViewController.swift; sourceTree = "<group>"; };
 		F4C6458B1DC5D4FE00C49B33 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		F4C6458D1DC5DEF700C49B33 /* Pin+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Pin+CoreDataClass.swift"; sourceTree = "<group>"; };
 		F4C6458E1DC5DEF700C49B33 /* Pin+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Pin+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 				F41B34C01DC461B800AB57F2 /* mapViewController.swift */,
 				F41B34EE1DC482F000AB57F2 /* collectionViewController.swift */,
 				F40C00D21DC86B37002B7E1D /* CollectionViewCell.swift */,
+				F48BA0B11DCB4DA400D47BF7 /* loadingViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -333,6 +336,7 @@
 				F4C645921DC5DEF700C49B33 /* Pin+CoreDataProperties.swift in Sources */,
 				F41B34C11DC461B800AB57F2 /* mapViewController.swift in Sources */,
 				F4C645911DC5DEF700C49B33 /* Pin+CoreDataClass.swift in Sources */,
+				F48BA0B21DCB4DA500D47BF7 /* loadingViewController.swift in Sources */,
 				F40F35A11DC9D94D0020DB50 /* GCDBlackBox.swift in Sources */,
 				F41B34F11DC48A6F00AB57F2 /* network.swift in Sources */,
 				F41B34BF1DC461B800AB57F2 /* AppDelegate.swift in Sources */,

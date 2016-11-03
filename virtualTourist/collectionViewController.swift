@@ -52,15 +52,19 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     //reload collectionView with new set of images
     @IBAction func refresh(_ sender: AnyObject)
     {
+        let controller = self.storyboard?.instantiateViewController(withIdentifier: "loadingViewController")as! loadingViewController
+        present(controller, animated: true, completion: nil)
+        print("working in background")
         deleteExistingPhotos()
         reloadImages { (sucess, error) in
             if sucess == true
             {
-                self.fetchPhoto()
+                print("working in background")
+                constants.finishedLoading = true
             }
-        }
-        
-        }
+            }
+    }
+    
     
     //create annotation when displaying the view
     func makeAnnotation()
@@ -222,11 +226,6 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
             }
             
         }
-        performUIUpdatesOnMain {
-            print("executed the reloading process")
-        self.collectionView.reloadData()
-            
-        }
     }
     
     func deleteExistingPhotos()
@@ -235,6 +234,7 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         let data:[Photo]!
         do{
             data = try self.moc.fetch(self.fr1)
+            print("The objects fetched to be deleted are \(data.count)")
             
         }
         catch{
@@ -247,6 +247,7 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         {
             if items.pin == self.data
             {
+                print("deleted the data completely")
                 self.moc.delete(data[data.index(of: items)!])
                 self.application.saveContext()
             }
