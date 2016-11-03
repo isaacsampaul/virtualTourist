@@ -134,7 +134,6 @@ class network
              print("unable to get photo list")
              return
              }
-             print("photo count is \(photoDictionary.count)")
              var count = 0
             print(photoDictionary)
              for images in photoDictionary
@@ -172,8 +171,8 @@ class network
                 else
             {
                 print("unable to get data")
-                completionHandlerForPhotoswithpage(false, "unable to get data")
-                return
+                return completionHandlerForPhotoswithpage(false, "unable to get data")
+            
                 }
                 count = count + 1
              print("for loop executed\(count)")
@@ -181,7 +180,7 @@ class network
              
              }
             self.fetchStoredData()
-            completionHandlerForPhotoswithpage(true, "")
+           return completionHandlerForPhotoswithpage(true, "")
         }
         task.resume()
 
@@ -193,6 +192,7 @@ class network
         let data:[Photo]!
         do{
             data = try self.moc.fetch(self.fr)
+            print("total photos present in data base is \(data.count)")
 
         }
         catch{

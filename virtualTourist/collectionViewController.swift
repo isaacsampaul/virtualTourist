@@ -36,7 +36,6 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         let region = MKCoordinateRegionMake(coordinate, MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
         map.setRegion(region, animated: true)
         frc = self.fetchResultsController()
-        self.fetchUsing()
         self.fetchPhoto()
         makeAnnotation()
     }
@@ -104,7 +103,7 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
             print("unable to move objects to data")
             return
         }
-        
+        print("data count in collectionView is \(data.count)")
         for items in data
         {
             
@@ -250,8 +249,6 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
             {
                 self.moc.delete(data[data.index(of: items)!])
                 self.application.saveContext()
-                print("executed")
-                
             }
             
         }
@@ -260,22 +257,20 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     // fetching the objects
     func fetchResultsController() -> NSFetchedResultsController<Photo>
     {
-        //self.fr1.predicate = NSPredicate(format: "pin == %@", self.data)
+        self.fr1.predicate = NSPredicate(format: "pin == %@", self.data)
         self.fr1.sortDescriptors = [NSSortDescriptor(key: "photoID", ascending: true)]
         let frc = NSFetchedResultsController(fetchRequest: self.fr1, managedObjectContext: self.moc, sectionNameKeyPath: nil, cacheName: nil)
         frc.delegate = self
+        do
+        {
+            try frc.performFetch()
+        }
+        catch
+        {
+            print("unable to fetch the objects using frc")
+            return frc
+        }
         return frc
     }
-    func fetchUsing()
-    {
-        do
-    {
-         try self.frc.performFetch()
-    }
-    catch
-    {
-        print("unable to fetch the objects using frc")
-        return
-        }
-    }
+    
 }
