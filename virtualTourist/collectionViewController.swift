@@ -160,8 +160,10 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
                 for items in data
                 {
                     // find the selected pin object and delete it. Then add the same pin object with different photoObject set
+                    print("for loop running")
                     if items.latitude == constants.latitude && items.longitude == constants.longitude
                     {
+                        print("found the item to be updated")
                         items.photo = NSSet(array: constants.imagesToDisplay) as NSSet
                         /*self.moc.delete(data[data.index(of: items)!])
                         let entityDescription = NSEntityDescription.entity(forEntityName: "Pin", in: self.moc)
@@ -170,7 +172,7 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
                         pin.longitude = constants.longitude
                         pin.photo = NSSet(array: constants.imagesToDisplay) as NSSet*/
                         self.application.saveContext()
-                        self.data = data[data.index(of: items)!]
+                        self.loadDataIntoCollectionView()
                         
                     }
                 }
@@ -225,6 +227,7 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     func loadDataIntoCollectionView()
     {
         let data = self.fetchStoredPins()
+        let data1 = self.data!
         for items in data{
             if items.latitude == constants.latitude && items.longitude == constants.longitude
             {
@@ -233,6 +236,14 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
                 
             }
             
+        }
+        if self.data == data1
+        {
+            print("data is not getting updated")
+        }
+        else
+        {
+            print("data is getting updated")
         }
     }
     

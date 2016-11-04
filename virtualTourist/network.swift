@@ -140,7 +140,7 @@ class network
              {
              if count < 50
              {
-                let randomPhoto = Int(arc4random_uniform(UInt32(photoDictionary.count))) + 1
+                let randomPhoto = Int(arc4random_uniform(UInt32(photoDictionary.count)))
                 let data = photoDictionary[randomPhoto]
                 guard let imageURLString = data["url_m"] as? String else
              {
