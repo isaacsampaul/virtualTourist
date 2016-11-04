@@ -28,6 +28,7 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
     
     override func viewWillAppear(_ animated: Bool) {
 
+        constants.finishedLoading = false
         let data:[Pin]!
         do{
             data = try self.moc.fetch(self.fr)

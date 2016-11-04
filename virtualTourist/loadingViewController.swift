@@ -18,7 +18,6 @@ class loadingViewController: UIViewController
     
     func update()
     {
-        print("timer executed once")
         if constants.finishedLoading == true
         {
             dismiss(animated: true, completion: nil)

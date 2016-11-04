@@ -38,6 +38,8 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         frc = self.fetchResultsController()
         self.fetchPhoto()
         makeAnnotation()
+        print("the loaded images are \(self.imageData.count)")
+        constants.finishedLoading = false
     }
     
     override func viewDidLoad() {
@@ -60,6 +62,10 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
             if sucess == true
             {
                 print("working in background")
+                constants.finishedLoading = true
+            }
+            else
+            {
                 constants.finishedLoading = true
             }
             }
@@ -156,13 +162,15 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
                     // find the selected pin object and delete it. Then add the same pin object with different photoObject set
                     if items.latitude == constants.latitude && items.longitude == constants.longitude
                     {
-                        self.moc.delete(data[data.index(of: items)!])
+                        items.photo = NSSet(array: constants.imagesToDisplay) as NSSet
+                        /*self.moc.delete(data[data.index(of: items)!])
                         let entityDescription = NSEntityDescription.entity(forEntityName: "Pin", in: self.moc)
                         let pin = Pin(entity: entityDescription!, insertInto: self.moc)
                         pin.latitude = constants.latitude
                         pin.longitude = constants.longitude
-                        pin.photo = NSSet(array: constants.imagesToDisplay) as NSSet
+                        pin.photo = NSSet(array: constants.imagesToDisplay) as NSSet*/
                         self.application.saveContext()
+                        self.data = data[data.index(of: items)!]
                         
                     }
                 }

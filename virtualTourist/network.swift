@@ -140,12 +140,14 @@ class network
              {
              if count < 50
              {
-             guard let imageURLString = images["url_m"] as? String else
+                let randomPhoto = Int(arc4random_uniform(UInt32(photoDictionary.count))) + 1
+                let data = photoDictionary[randomPhoto]
+                guard let imageURLString = data["url_m"] as? String else
              {
              print("unable to get image url")
              return
              }
-            guard let photoID = images["id"] as? String else
+            guard let photoID = data["id"] as? String else
             {
                 print("unable to get photo id")
                 return completionHandlerForPhotoswithpage(false, "unable to get photo ID")
