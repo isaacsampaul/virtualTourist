@@ -18,4 +18,12 @@ struct constants
     static var imagesToDisplay: [Photo] = []
     static var indexOfData: Int!
     static var finishedLoading = false
+    static var loadedData: Pin?
+    static var imageData: [NSData] = []
+    static var imageID: [String] = []
+    static var iserror = false
+    static var errorTitle = ""
+    static var errorMessage = ""
+    static var progress: Float = 0
 }
+

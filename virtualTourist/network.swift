@@ -14,6 +14,8 @@ class network
 {
     let moc = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var fr: NSFetchRequest<Photo> = Photo.fetchRequest()
+    var fr1: NSFetchRequest<Pin> = Pin.fetchRequest()
+    var application = (UIApplication.shared.delegate as! AppDelegate)
     
     func getPhotos(completionHandlerForPhotos: @escaping(_ sucess: Bool, _ error: String) -> Void)
     {
@@ -58,6 +60,7 @@ class network
             let pageLimit = min(totalPages, 40)
             print("total pages is \(totalPages)")
             let randomPage = Int(arc4random_uniform(UInt32(pageLimit))) + 1
+            print("random page number is \(randomPage)")
             self.getPhotosWithRandomPage(parameters: parameters, pageNumber: randomPage, completionHandlerForPhotoswithpage: { (sucess, error) in
                 completionHandlerForPhotos(sucess, error)
             })
@@ -134,8 +137,7 @@ class network
              print("unable to get photo list")
              return
              }
-             var count = 0
-            print(photoDictionary)
+             var count: Float = 0
              for images in photoDictionary
              {
              if count < 50
@@ -147,6 +149,7 @@ class network
              print("unable to get image url")
              return
              }
+            
             guard let photoID = data["id"] as? String else
             {
                 print("unable to get photo id")
@@ -155,7 +158,8 @@ class network
              let imageURL = URL(string: imageURLString)!
             if let imageData = NSData(contentsOf: imageURL)
             {
-                
+                constants.imageData.append(imageData)
+                constants.imageID.append(photoID)
                 let entityDescription = NSEntityDescription.entity(forEntityName: "Photo", in: self.moc)
                 let photo = Photo(entity: entityDescription!, insertInto: self.moc)
                 photo.photo = imageData
@@ -177,6 +181,7 @@ class network
             
                 }
                 count = count + 1
+                constants.progress = count
              print("for loop executed\(count)")
              }
              
@@ -210,7 +215,24 @@ class network
             print(range)
         constants.imagesToDisplay = Array(data[range])
         }
+        var pin:[Pin] = []
+        do{
+            pin = try self.moc.fetch(self.fr1)
+        }
+        catch
+        {
+            print("unable to get pin data")
+        }
+        for items in pin
+        {
+            if items.latitude == constants.latitude && items.longitude == constants.longitude
+            {
+                print("found items to get updated")
+                items.photo = NSSet(array: constants.imagesToDisplay) as NSSet
+            }
+        }
         
+        self.application.saveContext()
     }
     
    

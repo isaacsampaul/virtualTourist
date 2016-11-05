@@ -35,53 +35,35 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="6DL-3O-Osf"/>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CWI-Ws-j5n">
-                                <gestureRecognizers/>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="6DL-3O-Osf">
                                 <connections>
-                                    <outlet property="delegate" destination="BYZ-38-t0r" id="qO9-ZL-uXr"/>
-                                    <outletCollection property="gestureRecognizers" destination="WqV-SO-x9s" appends="YES" id="Uh2-5M-0ES"/>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="LET-B3-nCs"/>
                                 </connections>
                             </mapView>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="yrU-FV-Evw">
-                                <color key="color" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </activityIndicatorView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Please Wait While Downloading Images" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2mL-Db-0QO">
-                                <frame key="frameInset" minX="55" minY="297" width="266" height="42"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                <color key="textColor" red="0.60853161379961784" green="0.78063634563700757" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <gestureRecognizers/>
                         <constraints>
-                            <constraint firstItem="6DL-3O-Osf" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="K0G-eA-g9k"/>
-                            <constraint firstItem="2mL-Db-0QO" firstAttribute="centerX" secondItem="yrU-FV-Evw" secondAttribute="centerX" id="MnV-rT-gDv"/>
-                            <constraint firstItem="6DL-3O-Osf" firstAttribute="top" secondItem="CWI-Ws-j5n" secondAttribute="top" id="S2J-EC-AAg"/>
-                            <constraint firstItem="yrU-FV-Evw" firstAttribute="top" secondItem="2mL-Db-0QO" secondAttribute="bottom" constant="8" symbolic="YES" id="Yfb-gB-W0B"/>
-                            <constraint firstAttribute="trailing" secondItem="CWI-Ws-j5n" secondAttribute="trailing" id="Yj0-3U-sDG"/>
-                            <constraint firstItem="yrU-FV-Evw" firstAttribute="centerX" secondItem="CWI-Ws-j5n" secondAttribute="centerX" id="amA-Pe-Pox"/>
-                            <constraint firstItem="CWI-Ws-j5n" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="g2e-8N-O0C"/>
-                            <constraint firstItem="2mL-Db-0QO" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="39" id="gJT-Bf-mdN"/>
-                            <constraint firstItem="CWI-Ws-j5n" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="ik3-on-A0Z"/>
-                            <constraint firstItem="6DL-3O-Osf" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="kj3-Pj-K8o"/>
-                            <constraint firstItem="6DL-3O-Osf" firstAttribute="trailing" secondItem="CWI-Ws-j5n" secondAttribute="trailing" id="uC3-xb-JP1"/>
-                            <constraint firstItem="CWI-Ws-j5n" firstAttribute="leading" secondItem="6DL-3O-Osf" secondAttribute="leading" id="vLA-2q-r1r"/>
-                            <constraint firstItem="yrU-FV-Evw" firstAttribute="centerY" secondItem="6DL-3O-Osf" secondAttribute="centerY" id="wPu-4u-d1C"/>
+                            <constraint firstItem="6DL-3O-Osf" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="D2T-K1-uGJ"/>
+                            <constraint firstItem="6DL-3O-Osf" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="Fg5-k5-Gr2"/>
+                            <constraint firstAttribute="trailing" secondItem="6DL-3O-Osf" secondAttribute="trailing" id="JaA-09-Xnb"/>
+                            <constraint firstItem="6DL-3O-Osf" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="h1T-AP-kqk"/>
                         </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="WqV-SO-x9s" appends="YES" id="8WR-dn-vzj"/>
+                        </connections>
                     </view>
                     <navigationItem key="navigationItem" title="Map" id="ZR6-0q-iWQ"/>
                     <connections>
-                        <outlet property="activityIndicator" destination="yrU-FV-Evw" id="MZI-8x-fsM"/>
-                        <outlet property="label" destination="2mL-Db-0QO" id="28Z-Vh-T8E"/>
                         <outlet property="longPress" destination="WqV-SO-x9s" id="qkW-d9-SYe"/>
-                        <outlet property="map" destination="CWI-Ws-j5n" id="Yq9-96-cMr"/>
+                        <outlet property="map" destination="6DL-3O-Osf" id="aEz-Tb-r9w"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
                 <pongPressGestureRecognizer allowableMovement="0.0" minimumPressDuration="0.5" id="WqV-SO-x9s">
                     <connections>
                         <action selector="dropPin:" destination="BYZ-38-t0r" id="PWG-cI-RCI"/>
+                        <outlet property="delegate" destination="8bC-Xf-vdC" id="B7P-Zw-5Qw"/>
                     </connections>
                 </pongPressGestureRecognizer>
             </objects>
@@ -115,14 +97,12 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="a6Y-h3-Lby">
-                                <frame key="frameInset" width="1000" height="1000"/>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="a6Y-h3-Lby">
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="205" id="Ut7-ZL-6zf"/>
+                                    <constraint firstAttribute="height" constant="218" id="Ut7-ZL-6zf"/>
                                 </constraints>
                             </mapView>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="NHY-Ni-83Q">
-                                <frame key="frameInset" width="1000" height="1000"/>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="NHY-Ni-83Q">
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="5" minimumInteritemSpacing="5" id="kDT-l6-xSY">
                                     <size key="itemSize" width="92" height="64"/>
@@ -158,10 +138,10 @@
                                 </connections>
                             </collectionView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="vth-J7-EUq" firstAttribute="top" secondItem="8bO-rV-oz6" secondAttribute="bottom" id="DvP-zJ-tCE"/>
-                            <constraint firstItem="NHY-Ni-83Q" firstAttribute="top" secondItem="a6Y-h3-Lby" secondAttribute="bottom" id="Okq-ZG-csU"/>
+                            <constraint firstItem="NHY-Ni-83Q" firstAttribute="top" secondItem="a6Y-h3-Lby" secondAttribute="bottom" constant="-2" id="Okq-ZG-csU"/>
                             <constraint firstItem="a6Y-h3-Lby" firstAttribute="leading" secondItem="NHY-Ni-83Q" secondAttribute="leading" id="Q0V-Rj-lVI"/>
                             <constraint firstItem="vth-J7-EUq" firstAttribute="leading" secondItem="a6Y-h3-Lby" secondAttribute="leading" id="Yjs-ig-xbD"/>
                             <constraint firstItem="vth-J7-EUq" firstAttribute="leading" secondItem="pWF-Zf-3ud" secondAttribute="leading" id="a72-C4-rsd"/>
@@ -175,6 +155,7 @@
                     <connections>
                         <outlet property="Done" destination="K39-7R-TzY" id="IOl-V7-oBi"/>
                         <outlet property="collectionView" destination="NHY-Ni-83Q" id="EPv-Mm-d5N"/>
+                        <outlet property="flowLayout" destination="kDT-l6-xSY" id="pUn-GG-1PX"/>
                         <outlet property="map" destination="a6Y-h3-Lby" id="gqZ-i5-llr"/>
                         <outlet property="reload" destination="4IT-Xu-UGQ" id="M0B-6R-GS9"/>
                     </connections>
@@ -206,16 +187,25 @@
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="Qgc-Rx-Dga">
                                 <color key="color" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </activityIndicatorView>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.10000000000000001" translatesAutoresizingMaskIntoConstraints="NO" id="Ftn-VF-PoN">
+                                <color key="progressTintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </progressView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.53564101841516543" green="0.91708775172572865" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="uh9-kz-CB5" firstAttribute="top" secondItem="TRw-aX-9Bu" secondAttribute="bottom" constant="117" id="6b9-ag-EFL"/>
                             <constraint firstItem="uh9-kz-CB5" firstAttribute="leading" secondItem="rPf-sF-WvY" secondAttribute="leadingMargin" id="AZw-Wc-C9s"/>
                             <constraint firstItem="PYj-e9-Ayn" firstAttribute="top" secondItem="Qgc-Rx-Dga" secondAttribute="bottom" constant="275" id="Hj4-G2-7s5"/>
+                            <constraint firstItem="Ftn-VF-PoN" firstAttribute="top" secondItem="Qgc-Rx-Dga" secondAttribute="bottom" constant="48" id="SJX-MA-Qp6"/>
                             <constraint firstItem="uh9-kz-CB5" firstAttribute="trailing" secondItem="rPf-sF-WvY" secondAttribute="trailingMargin" id="cXv-uL-iGs"/>
+                            <constraint firstItem="Ftn-VF-PoN" firstAttribute="trailing" secondItem="uh9-kz-CB5" secondAttribute="trailing" id="iat-nQ-aWF"/>
                             <constraint firstItem="uh9-kz-CB5" firstAttribute="centerX" secondItem="Qgc-Rx-Dga" secondAttribute="centerX" id="twb-bu-V8d"/>
+                            <constraint firstItem="Ftn-VF-PoN" firstAttribute="leading" secondItem="uh9-kz-CB5" secondAttribute="leading" id="x6L-Z8-v8C"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="progressView" destination="Ftn-VF-PoN" id="fN0-pe-w5u"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iFy-qS-6ai" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

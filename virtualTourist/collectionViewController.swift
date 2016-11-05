@@ -15,6 +15,7 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
 {
     // var and outlet declaration
     
+    @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     @IBOutlet weak var reload: UIBarButtonItem!
     @IBOutlet weak var Done: UIBarButtonItem!
     @IBOutlet weak var collectionView: UICollectionView!
@@ -32,18 +33,48 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     var fr: NSFetchRequest<Pin> = Pin.fetchRequest()
     
     override func viewWillAppear(_ animated: Bool) {
+        let space:CGFloat = 1.0
+        //let dimension1 = (view.frame.size.width - (2 * space))/3.0
+        //let dimension2 = (view.frame.size.height - (2 * space))/3.0
+        flowLayout.minimumLineSpacing = space
+        flowLayout.minimumInteritemSpacing = space
+        flowLayout.itemSize = CGSize(width: 92, height: 64)
         let coordinate = constants.coordinate!
         let region = MKCoordinateRegionMake(coordinate, MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
         map.setRegion(region, animated: true)
         frc = self.fetchResultsController()
         self.fetchPhoto()
         makeAnnotation()
+        if data.photo?.count == 0 || data.photo?.count == nil
+        {
+            let controller = self.storyboard?.instantiateViewController(withIdentifier: "loadingViewController")as! loadingViewController
+            present(controller, animated: true, completion: nil)
+            reloadImages(completionHandlerForReloadingImages: { (sucess, error) in
+                
+                if sucess == true
+                    {
+                        print("working in background")
+                        constants.finishedLoading = true
+                }
+                else
+                {
+                    constants.errorTitle = "Please Check Your Internet Connection"
+                    constants.errorMessage = "Unable to refresh data"
+                    constants.iserror = true
+                    constants.finishedLoading = true
+                    
+                }
+                
+            })
+        }
         print("the loaded images are \(self.imageData.count)")
         constants.finishedLoading = false
+        constants.iserror = false
     }
     
     override func viewDidLoad() {
         collectionView.reloadData()
+        constants.loadedData = self.data
     }
     
     //dismiss present view controller when done button is pressed
@@ -57,7 +88,6 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         let controller = self.storyboard?.instantiateViewController(withIdentifier: "loadingViewController")as! loadingViewController
         present(controller, animated: true, completion: nil)
         print("working in background")
-        deleteExistingPhotos()
         reloadImages { (sucess, error) in
             if sucess == true
             {
@@ -66,11 +96,14 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
             }
             else
             {
+                constants.errorTitle = "Please Check Your Internet Connection"
+                constants.errorMessage = "Unable to refresh data"
+                constants.iserror = true
                 constants.finishedLoading = true
+                
             }
             }
     }
-    
     
     //create annotation when displaying the view
     func makeAnnotation()
@@ -156,25 +189,15 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
                 self.Done.isEnabled = true
                 self.reload.isEnabled = true
                 self.collectionView.isScrollEnabled = true
-                let data = self.fetchStoredPins()
+                let data = self.frc.fetchedObjects!
                 for items in data
                 {
                     // find the selected pin object and delete it. Then add the same pin object with different photoObject set
                     print("for loop running")
-                    if items.latitude == constants.latitude && items.longitude == constants.longitude
-                    {
-                        print("found the item to be updated")
-                        items.photo = NSSet(array: constants.imagesToDisplay) as NSSet
-                        /*self.moc.delete(data[data.index(of: items)!])
-                        let entityDescription = NSEntityDescription.entity(forEntityName: "Pin", in: self.moc)
-                        let pin = Pin(entity: entityDescription!, insertInto: self.moc)
-                        pin.latitude = constants.latitude
-                        pin.longitude = constants.longitude
-                        pin.photo = NSSet(array: constants.imagesToDisplay) as NSSet*/
-                        self.application.saveContext()
-                        self.loadDataIntoCollectionView()
-                        
-                    }
+                    items.photo = constants.imageData[data.index(of: items)!]
+                    items.photoID = constants.imageID[data.index(of: items)!]
+                    self.application.saveContext()
+                    
                 }
                 
                 return completionHandlerForReloadingImages(true, "")
@@ -185,93 +208,10 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
                 self.Done.isEnabled = true
                 self.reload.isEnabled = true
                 self.collectionView.isScrollEnabled = true
-               self.displayAlert(title: "Please check your Internet Connection", message: "Unable to Reload Images")
                 return completionHandlerForReloadingImages(false,"unable to reload images")
             }
         }
         
-    }
-
-    // displays an alert using the given title and messagae
-    func displayAlert(title: String, message: String)
-    {
-        let alert = UIAlertController()
-        alert.title = title
-        alert.message = message
-        let continueAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default){
-            
-            action in alert.dismiss(animated: true, completion: nil)
-            
-        }
-        alert.addAction(continueAction)
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    // returns a array of pinObjects
-    func fetchStoredPins() -> [Pin]
-    {
-        
-        let data:[Pin]!
-        do{
-            data = try self.moc.fetch(self.fr)
-        }
-        catch{
-            
-            print("unable to retrieve data")
-            return []
-        }
-        return data
-    }
-    
-    // loads the data into the data variabe in collectionView
-    func loadDataIntoCollectionView()
-    {
-        let data = self.fetchStoredPins()
-        let data1 = self.data!
-        for items in data{
-            if items.latitude == constants.latitude && items.longitude == constants.longitude
-            {
-                self.data = data[data.index(of: items)!]
-                print("found the Items to reload")
-                
-            }
-            
-        }
-        if self.data == data1
-        {
-            print("data is not getting updated")
-        }
-        else
-        {
-            print("data is getting updated")
-        }
-    }
-    
-    func deleteExistingPhotos()
-    {
-        print("deleting photos")
-        let data:[Photo]!
-        do{
-            data = try self.moc.fetch(self.fr1)
-            print("The objects fetched to be deleted are \(data.count)")
-            
-        }
-        catch{
-            
-            print("unable to retrieve data")
-            return
-        }
-        
-        for items in data
-        {
-            if items.pin == self.data
-            {
-                print("deleted the data completely")
-                self.moc.delete(data[data.index(of: items)!])
-                self.application.saveContext()
-            }
-            
-        }
     }
     
     // fetching the objects
@@ -283,6 +223,7 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         frc.delegate = self
         do
         {
+            print("executed fetch")
             try frc.performFetch()
         }
         catch
@@ -291,6 +232,12 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
             return frc
         }
         return frc
+    }
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        performUIUpdatesOnMain {
+            self.collectionView.reloadData()
+        }
     }
     
 }

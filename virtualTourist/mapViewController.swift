@@ -13,8 +13,6 @@ import CoreData
 class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsControllerDelegate {
     @IBOutlet weak var map: MKMapView!
     @IBOutlet var longPress: UILongPressGestureRecognizer!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var label: UILabel!
     var isExecuting = false
     var latitude: Double!
     var longitude: Double!
@@ -22,13 +20,14 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
     var fr: NSFetchRequest<Pin> = Pin.fetchRequest()
     
     override func viewDidLoad() {
-        UIEnabler(Status: true)
-        
+        longPress.isEnabled = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
 
+    
         constants.finishedLoading = false
+        constants.iserror = false
         let data:[Pin]!
         do{
             data = try self.moc.fetch(self.fr)
@@ -51,9 +50,11 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
                 map.addAnnotation(annotation)
             }
         }
+        map.reloadInputViews()
     }
     
     @IBAction func dropPin(_ sender: AnyObject) {
+        print("pressed")
       if longPress.state == .began
       {
     
@@ -63,18 +64,17 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
         anotation.coordinate = coordinates
         constants.latitude = coordinates.latitude
         constants.longitude = coordinates.longitude
-        /*map.addAnnotation(anotation)
-        let entityDescription = NSEntityDescription.entity(forEntityName: "Pin", in: self.moc)
-        let pin = Pin(entity: entityDescription!, insertInto: self.moc)
-        pin.latitude = coordinates.latitude
-        pin.longitude = coordinates.longitude */
+        map.addAnnotation(anotation)
         let netCode = network()
-        UIEnabler(Status: false)
+        let controller = self.storyboard?.instantiateViewController(withIdentifier: "loadingViewController")as! loadingViewController
+        performUIUpdatesOnMain {
+        self.present(controller, animated: true, completion: nil)
+        }
         // get images and store them
         netCode.getPhotos { (sucess, error) in
             if sucess == true
             {
-                self.UIEnabler(Status: true)
+    
                 self.map.addAnnotation(anotation)
                 let entityDescription = NSEntityDescription.entity(forEntityName: "Pin", in: self.moc)
                 let pin = Pin(entity: entityDescription!, insertInto: self.moc)
@@ -85,11 +85,18 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
                     pin.photo = NSSet(array: constants.imagesToDisplay) as NSSet
                 }
                 
+                constants.finishedLoading = true
+                
             }
             else
             {
-                self.UIEnabler(Status: true)
-                self.displayAlert(title: "Please check your Internet Connection", message: "Unable to add Annotation to Map")
+                performUIUpdatesOnMain {
+                self.map.removeAnnotation(anotation)
+                }
+                constants.errorTitle = "Please check your Internet Connection"
+                constants.errorMessage = "Unable to add Annotation to Map"
+                constants.iserror = true
+                constants.finishedLoading = true
                 print(error)
             }
         
@@ -103,7 +110,6 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
             return
         }
             self.longPress.isEnabled = true
-            self.UIEnabler(Status: true)
         // fetch the data
         self.fetchStoredData()
             }
@@ -154,35 +160,6 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
         present(controller, animated: true, completion: nil)
     }
     
-    func UIEnabler(Status: Bool)
-    {
-        activityIndicator.isHidden = Status
-        if Status == true
-        {
-            map.isHidden = false
-        }
-        else
-        {
-            map.isHidden = true
-        }
-        label.isHidden = Status
-        
-    }
     
-    func displayAlert(title: String, message: String)
-    {
-        self.UIEnabler(Status: true)
-        let alert = UIAlertController()
-        alert.title = title
-        alert.message = message
-        let continueAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default){
-            
-            action in alert.dismiss(animated: true, completion: nil)
-            
-        }
-        alert.addAction(continueAction)
-        self.present(alert, animated: true, completion: nil)
-    }
-
 }
 
