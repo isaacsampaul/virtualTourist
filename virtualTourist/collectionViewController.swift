@@ -47,21 +47,20 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         makeAnnotation()
         if data.photo?.count == 0 || data.photo?.count == nil
         {
-            let controller = self.storyboard?.instantiateViewController(withIdentifier: "loadingViewController")as! loadingViewController
-            present(controller, animated: true, completion: nil)
+            self.uiEnabler(status: false)
+            
             reloadImages(completionHandlerForReloadingImages: { (sucess, error) in
                 
                 if sucess == true
                     {
-                        print("working in background")
-                        constants.finishedLoading = true
+                    self.uiEnabler(status: true)
                 }
                 else
                 {
-                    constants.errorTitle = "Please Check Your Internet Connection"
-                    constants.errorMessage = "Unable to refresh data"
-                    constants.iserror = true
-                    constants.finishedLoading = true
+                    performUIUpdatesOnMain {
+                        self.displayError(title: "Check your Internet Connection", message: "Unable to download images")
+                        self.uiEnabler(status: true)
+                    }
                     
                 }
                 
@@ -85,24 +84,25 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     //reload collectionView with new set of images
     @IBAction func refresh(_ sender: AnyObject)
     {
-        let controller = self.storyboard?.instantiateViewController(withIdentifier: "loadingViewController")as! loadingViewController
-        present(controller, animated: true, completion: nil)
-        print("working in background")
+
+        self.uiEnabler(status: false)
+        self.deleteAllPhotos()
         reloadImages { (sucess, error) in
             if sucess == true
             {
-                print("working in background")
-                constants.finishedLoading = true
+                self.uiEnabler(status: true)
             }
             else
             {
-                constants.errorTitle = "Please Check Your Internet Connection"
-                constants.errorMessage = "Unable to refresh data"
-                constants.iserror = true
-                constants.finishedLoading = true
+               
+                performUIUpdatesOnMain {
+                    self.displayError(title: "Check your Internet Connection", message: "Unable to download images")
+                }
+                
+                self.uiEnabler(status: true)
                 
             }
-            }
+        }
     }
     
     //create annotation when displaying the view
@@ -116,7 +116,7 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     // Tells collection view the number of items to be displayed
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         print("The total fetched object is \(self.frc.fetchedObjects?.count)")
-        return self.imageData.count
+        return imageData.count
     }
     
     // Displays all the items for the selected pin
@@ -181,34 +181,16 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     {
         self.Done.isEnabled = false
         self.reload.isEnabled = false
-        self.collectionView.isScrollEnabled = false
         let netCode = network()
         netCode.getPhotos { (sucess, error) in
-            if sucess == true
+        
+            if error != ""
             {
-                self.Done.isEnabled = true
-                self.reload.isEnabled = true
-                self.collectionView.isScrollEnabled = true
-                let data = self.frc.fetchedObjects!
-                for items in data
-                {
-                    // find the selected pin object and delete it. Then add the same pin object with different photoObject set
-                    print("for loop running")
-                    items.photo = constants.imageData[data.index(of: items)!]
-                    items.photoID = constants.imageID[data.index(of: items)!]
-                    self.application.saveContext()
-                    
-                }
-                
-                return completionHandlerForReloadingImages(true, "")
-                
+                return completionHandlerForReloadingImages(sucess,error)
             }
             else
             {
-                self.Done.isEnabled = true
-                self.reload.isEnabled = true
-                self.collectionView.isScrollEnabled = true
-                return completionHandlerForReloadingImages(false,"unable to reload images")
+                return completionHandlerForReloadingImages(sucess,error)
             }
         }
         
@@ -234,10 +216,62 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         return frc
     }
     
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        performUIUpdatesOnMain {
-            self.collectionView.reloadData()
+    func deleteAllPhotos()
+    {
+        for items in frc.fetchedObjects!
+        {
+            self.moc.delete(items)
+            self.application.saveContext()
         }
     }
     
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        if type == .delete
+        {
+            self.imageData.remove(at: (indexPath?.row)!)
+            print("image data after deletion is \(imageData.count)")
+            collectionView.reloadData()
+        }
+        if type == .update
+        {
+            print("data is getting updated")
+        }
+        if type == .insert
+        {
+            self.imageData = []
+            print("data is getting inserted")
+            let data = frc.fetchedObjects
+            print("fetched object after inserting is \(data?.count)")
+            for items in data!
+            {
+                
+               self.imageData.append(items.photo!)
+                
+            }
+                self.collectionView.reloadData()
+            print("image appended after inserting is \(imageData.count)")
+        }
+    }
+    
+    func displayError(title: String, message: String)
+    {
+        let alert = UIAlertController()
+        alert.title = title
+        alert.message = message
+        let continueAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default){
+            
+            action in alert.dismiss(animated: true, completion: nil)
+            
+        }
+        alert.addAction(continueAction)
+        self.present(alert, animated: true, completion: nil)
+    }
+
+    func uiEnabler(status: Bool)
+    {
+        performUIUpdatesOnMain {
+        self.reload.isEnabled = status
+        self.Done.isEnabled = status
+        }
+    }
 }

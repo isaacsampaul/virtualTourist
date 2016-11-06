@@ -164,6 +164,7 @@ class network
                 let photo = Photo(entity: entityDescription!, insertInto: self.moc)
                 photo.photo = imageData
                 photo.photoID = photoID
+                constants.imageID1 = photoID
                 do{
                     try self.moc.save()
                 }
@@ -183,10 +184,10 @@ class network
                 count = count + 1
                 constants.progress = count
              print("for loop executed\(count)")
+            self.fetchStoredData()
              }
              
              }
-            self.fetchStoredData()
            return completionHandlerForPhotoswithpage(true, "")
         }
         task.resume()
@@ -195,8 +196,8 @@ class network
     
     func fetchStoredData()
     {
-        
-        let data:[Photo]!
+    
+        var data:[Photo]!
         do{
             data = try self.moc.fetch(self.fr)
             print("total photos present in data base is \(data.count)")
@@ -207,14 +208,15 @@ class network
             print("unable to retrieve data")
             return
         }
-        if data != nil
+        
+        /*if data != nil
         {
             let limit = data.count - 50
             print(data.index(after: limit))
             let range = Range(uncheckedBounds: (lower: limit, upper: data.count))
             print(range)
         constants.imagesToDisplay = Array(data[range])
-        }
+        }*/
         var pin:[Pin] = []
         do{
             pin = try self.moc.fetch(self.fr1)
@@ -227,8 +229,27 @@ class network
         {
             if items.latitude == constants.latitude && items.longitude == constants.longitude
             {
-                print("found items to get updated")
-                items.photo = NSSet(array: constants.imagesToDisplay) as NSSet
+                do{
+                    data = try self.moc.fetch(self.fr)
+                    print("total photos present in data base is \(data.count)")
+                    
+                }
+                catch{
+                    
+                    print("unable to retrieve data")
+                    return
+                }
+                
+                for item in data
+                {
+                    if item.photoID == constants.imageID1
+                    {
+                        print("found the photo")
+                        item.pin = pin[pin.index(of: items)!]
+                        self.application.saveContext()
+                    }
+                }
+            
             }
         }
         

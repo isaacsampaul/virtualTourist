@@ -24,6 +24,8 @@ struct constants
     static var iserror = false
     static var errorTitle = ""
     static var errorMessage = ""
+    static var imageID1 = ""
     static var progress: Float = 0
+    
 }
 

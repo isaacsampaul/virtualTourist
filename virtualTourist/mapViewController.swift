@@ -18,6 +18,7 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
     var longitude: Double!
     let moc = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var fr: NSFetchRequest<Pin> = Pin.fetchRequest()
+    var application = (UIApplication.shared.delegate as! AppDelegate)
     
     override func viewDidLoad() {
         longPress.isEnabled = true
@@ -65,41 +66,22 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
         constants.latitude = coordinates.latitude
         constants.longitude = coordinates.longitude
         map.addAnnotation(anotation)
+        let entityDescription = NSEntityDescription.entity(forEntityName: "Pin", in: self.moc)
+        let pin = Pin(entity: entityDescription!, insertInto: self.moc)
+        pin.latitude = coordinates.latitude
+        pin.longitude = coordinates.longitude
+        self.application.saveContext()
         let netCode = network()
-        let controller = self.storyboard?.instantiateViewController(withIdentifier: "loadingViewController")as! loadingViewController
-        performUIUpdatesOnMain {
-        self.present(controller, animated: true, completion: nil)
-        }
         // get images and store them
         netCode.getPhotos { (sucess, error) in
-            if sucess == true
+            if error != ""
             {
-    
-                self.map.addAnnotation(anotation)
-                let entityDescription = NSEntityDescription.entity(forEntityName: "Pin", in: self.moc)
-                let pin = Pin(entity: entityDescription!, insertInto: self.moc)
-                pin.latitude = coordinates.latitude
-                pin.longitude = coordinates.longitude
-                if pin.photo?.count == 0
-                {
-                    pin.photo = NSSet(array: constants.imagesToDisplay) as NSSet
-                }
-                
-                constants.finishedLoading = true
-                
-            }
-            else
-            {
+
                 performUIUpdatesOnMain {
-                self.map.removeAnnotation(anotation)
+                self.displayError(title: "Check your Internet Connection", message: "Unable to download images")
                 }
-                constants.errorTitle = "Please check your Internet Connection"
-                constants.errorMessage = "Unable to add Annotation to Map"
-                constants.iserror = true
-                constants.finishedLoading = true
-                print(error)
+                
             }
-        
         // save the datas
         do{
             try self.moc.save()
@@ -160,6 +142,18 @@ class mapViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsCont
         present(controller, animated: true, completion: nil)
     }
     
+    func displayError(title: String, message: String)
+    {
+        let alert = UIAlertController()
+        alert.title = title
+        alert.message = message
+        let continueAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default){
+            
+            action in alert.dismiss(animated: true, completion: nil)
+            
+        }
+        alert.addAction(continueAction)
+        self.present(alert, animated: true, completion: nil)
+    }
     
 }
-
