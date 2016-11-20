@@ -209,14 +209,6 @@ class network
             return
         }
         
-        /*if data != nil
-        {
-            let limit = data.count - 50
-            print(data.index(after: limit))
-            let range = Range(uncheckedBounds: (lower: limit, upper: data.count))
-            print(range)
-        constants.imagesToDisplay = Array(data[range])
-        }*/
         var pin:[Pin] = []
         do{
             pin = try self.moc.fetch(self.fr1)

@@ -25,7 +25,7 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     var removedData: NSData!
     var application = (UIApplication.shared.delegate as! AppDelegate)
     var frc: NSFetchedResultsController<Photo>!
-    
+    var itemsNo = 50
     // creating managed object context and fetch request for both pin and photo objects
     
     let moc = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -116,19 +116,32 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     // Tells collection view the number of items to be displayed
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         print("The total fetched object is \(self.frc.fetchedObjects?.count)")
-        return imageData.count
+        return itemsNo
     }
     
     // Displays all the items for the selected pin
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! collectionViewCell
-        let data = self.imageData[indexPath.row]
+        if indexPath.row < imageData.count
+        {
+        guard let data = imageData[indexPath.row] as? Data else
+        {
+            return cell
+        }
+        //data = imageData[indexPath.row]
         cell.image.image = UIImage(data: data as Data)
         return cell
-    }
+        }
+        else
+        {
+            return cell
+        }
+        
+}
     
     // Delete the selected item from the collectionView and the coreData
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        itemsNo = itemsNo - 1
         self.removedData = imageData[indexPath.row]
         imageData.remove(at: indexPath.row)
         collectionView.deleteItems(at: [indexPath])
@@ -196,6 +209,7 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
         
     }
     
+    
     // fetching the objects
     func fetchResultsController() -> NSFetchedResultsController<Photo>
     {
@@ -228,7 +242,7 @@ class collectionViewController: UIViewController,MKMapViewDelegate,UICollectionV
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         if type == .delete
         {
-            self.imageData.remove(at: (indexPath?.row)!)
+            //self.imageData.remove(at: (indexPath?.row)!)
             print("image data after deletion is \(imageData.count)")
             collectionView.reloadData()
         }
